@@ -22,10 +22,12 @@ services:
     container_name: garage-simulator
     ports:
       - "3000:3000"
+      - "3003:3003"
 
   app:
     build: .
     container_name: parking-api
+    network_mode: "service:simulator"
     depends_on:
       mysql:
         condition: service_healthy
@@ -36,9 +38,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/parking_manager?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: parking
       SPRING_DATASOURCE_PASSWORD: parking
-      GARAGE_SIMULATOR_URL: http://simulator:3000
-    ports:
-      - "3003:3003"
+      GARAGE_SIMULATOR_URL: http://localhost:3000
 
 volumes:
   mysql-data:

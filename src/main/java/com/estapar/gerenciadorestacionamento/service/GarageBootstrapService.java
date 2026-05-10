@@ -5,6 +5,7 @@ import com.estapar.gerenciadorestacionamento.domain.Sector;
 import com.estapar.gerenciadorestacionamento.dto.GarageResponse;
 import com.estapar.gerenciadorestacionamento.repository.ParkingSpotRepository;
 import com.estapar.gerenciadorestacionamento.repository.SectorRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.util.Map;
 import java.util.function.Function;
@@ -22,17 +23,20 @@ import org.springframework.web.client.RestTemplate;
 public class GarageBootstrapService implements CommandLineRunner {
 
 	private final RestTemplate restTemplate;
+	private final EntityManager entityManager;
 	private final SectorRepository sectorRepository;
 	private final ParkingSpotRepository parkingSpotRepository;
 	private final String simulatorUrl;
 
 	public GarageBootstrapService(
 			RestTemplate restTemplate,
+			EntityManager entityManager,
 			SectorRepository sectorRepository,
 			ParkingSpotRepository parkingSpotRepository,
 			@Value("${garage.simulator.url}") String simulatorUrl
 	) {
 		this.restTemplate = restTemplate;
+		this.entityManager = entityManager;
 		this.sectorRepository = sectorRepository;
 		this.parkingSpotRepository = parkingSpotRepository;
 		this.simulatorUrl = simulatorUrl;
@@ -41,6 +45,8 @@ public class GarageBootstrapService implements CommandLineRunner {
 	@Override
 	@Transactional
 	public void run(String... args) {
+		clearDatabase();
+
 		GarageResponse response;
 		try {
 			response = restTemplate.getForObject(simulatorUrl + "/garage", GarageResponse.class);
@@ -73,5 +79,14 @@ public class GarageBootstrapService implements CommandLineRunner {
 			spot.update(sector, spotResponse.lat(), spotResponse.lng());
 			parkingSpotRepository.save(spot);
 		}
+	}
+
+	private void clearDatabase() {
+		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE vehicle_stays").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE parking_spots").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE sectors").executeUpdate();
+		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+		entityManager.clear();
 	}
 }

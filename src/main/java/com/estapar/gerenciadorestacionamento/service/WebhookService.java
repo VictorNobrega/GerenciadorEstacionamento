@@ -2,11 +2,13 @@ package com.estapar.gerenciadorestacionamento.service;
 
 import com.estapar.gerenciadorestacionamento.domain.ParkingSpot;
 import com.estapar.gerenciadorestacionamento.domain.VehicleStay;
+import com.estapar.gerenciadorestacionamento.dto.WebhookRecordResponse;
 import com.estapar.gerenciadorestacionamento.dto.WebhookRequest;
 import com.estapar.gerenciadorestacionamento.repository.ParkingSpotRepository;
 import com.estapar.gerenciadorestacionamento.repository.VehicleStayRepository;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,30 @@ public class WebhookService {
 			case PARKED -> handleParked(request);
 			case EXIT -> handleExit(request);
 		}
+	}
+
+	public List<WebhookRecordResponse> listRecords() {
+		return vehicleStayRepository.findAllByOrderByEntryTimeDescIdDesc()
+				.stream()
+				.map(this::toResponse)
+				.toList();
+	}
+
+	private WebhookRecordResponse toResponse(VehicleStay stay) {
+		ParkingSpot spot = stay.getSpot();
+		return new WebhookRecordResponse(
+				stay.getId(),
+				stay.getLicensePlate(),
+				stay.getEntryTime(),
+				stay.getExitTime(),
+				stay.getSector() == null ? null : stay.getSector().getCode(),
+				spot == null ? null : spot.getId(),
+				spot == null ? null : spot.getLat(),
+				spot == null ? null : spot.getLng(),
+				stay.getHourlyPrice(),
+				stay.getAmount(),
+				stay.getLastEventType()
+		);
 	}
 
 	private void handleEntry(WebhookRequest request) {

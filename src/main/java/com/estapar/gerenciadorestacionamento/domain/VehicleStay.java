@@ -89,6 +89,10 @@ public class VehicleStay {
 		return amount;
 	}
 
+	public EventType getLastEventType() {
+		return lastEventType;
+	}
+
 	public boolean isClosed() {
 		return exitTime != null;
 	}

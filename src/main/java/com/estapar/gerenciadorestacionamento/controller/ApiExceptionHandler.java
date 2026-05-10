@@ -5,6 +5,7 @@ import com.estapar.gerenciadorestacionamento.service.BusinessException;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -30,6 +31,7 @@ public class ApiExceptionHandler {
 	}
 
 	@ExceptionHandler({
+			HttpMessageNotReadableException.class,
 			MissingServletRequestParameterException.class,
 			MethodArgumentTypeMismatchException.class
 	})

@@ -24,7 +24,7 @@ Servicos expostos:
 - Simulador: `http://localhost:3000`
 - MySQL: `localhost:3306`
 
-Ao iniciar, a aplicacao busca a configuracao da garagem em `GET /garage` no simulador e grava setores/vagas no MySQL.
+Ao iniciar, a aplicacao limpa os dados do MySQL, busca a configuracao da garagem em `GET /garage` no simulador e grava setores/vagas novamente.
 
 ## Como executar localmente
 
@@ -92,12 +92,49 @@ curl -X POST http://localhost:3003/webhook \
   }'
 ```
 
-### Faturamento
+### Registros de estacionamento
 
-`GET /revenue?date=YYYY-MM-DD&sector=A`
+`GET /parking-records`
+
+Retorna as permanencias criadas a partir dos eventos recebidos pelo webhook, ordenadas pelas entradas mais recentes.
 
 ```bash
-curl 'http://localhost:3003/revenue?date=2025-01-01&sector=A'
+curl 'http://localhost:3003/parking-records'
+```
+
+Resposta:
+
+```json
+[
+  {
+    "id": 1,
+    "licensePlate": "ZUL0001",
+    "entryTime": "2025-01-01T12:00:00Z",
+    "exitTime": "2025-01-01T13:01:00Z",
+    "sector": "A",
+    "spotId": 1,
+    "lat": -23.561684,
+    "lng": -46.655981,
+    "hourlyPrice": 10.00,
+    "amount": 18.00,
+    "lastEventType": "EXIT"
+  }
+]
+```
+
+### Faturamento
+
+`GET /revenue`
+
+Observacao: o endpoint segue o contrato do desafio usando body em uma requisicao `GET`. Ele funciona em clientes como Postman e curl, mas o "Try it out" do Swagger UI pode falhar porque navegadores bloqueiam body em `GET`.
+
+```bash
+curl -X GET http://localhost:3003/revenue \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "date": "2025-01-01",
+    "sector": "A"
+  }'
 ```
 
 Resposta:

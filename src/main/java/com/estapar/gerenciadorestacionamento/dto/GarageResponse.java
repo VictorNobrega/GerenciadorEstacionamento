@@ -1,6 +1,7 @@
 package com.estapar.gerenciadorestacionamento.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -16,7 +17,7 @@ public record GarageResponse(
 
 	public record GarageSectorResponse(
 			@NotBlank String sector,
-			@NotNull @Positive BigDecimal basePrice,
+			@JsonAlias("base_price") @NotNull @Positive BigDecimal basePrice,
 			@JsonProperty("max_capacity") @Positive int maxCapacity
 	) {
 	}

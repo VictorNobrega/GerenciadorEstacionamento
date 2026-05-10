@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,11 +28,18 @@ class RevenueControllerTest {
 	private RevenueService revenueService;
 
 	@Test
-	void returnsRevenueByQueryParams() throws Exception {
+	void returnsRevenueByRequestBody() throws Exception {
 		when(revenueService.getRevenue(eq(LocalDate.parse("2025-01-01")), eq("A")))
 				.thenReturn(new RevenueResponse(BigDecimal.valueOf(20).setScale(2), "BRL", Instant.parse("2025-01-01T15:00:00Z")));
 
-		mockMvc.perform(get("/revenue").param("date", "2025-01-01").param("sector", "A"))
+		mockMvc.perform(get("/revenue")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "date": "2025-01-01",
+								  "sector": "A"
+								}
+								"""))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.amount").value(20.00))
 				.andExpect(jsonPath("$.currency").value("BRL"))
