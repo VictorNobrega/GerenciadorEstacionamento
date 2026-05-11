@@ -3,6 +3,7 @@ package com.estapar.gerenciadorestacionamento.service;
 import com.estapar.gerenciadorestacionamento.domain.ParkingSpot;
 import com.estapar.gerenciadorestacionamento.domain.Sector;
 import com.estapar.gerenciadorestacionamento.dto.GarageResponse;
+import com.estapar.gerenciadorestacionamento.exception.BusinessException;
 import com.estapar.gerenciadorestacionamento.repository.ParkingSpotRepository;
 import com.estapar.gerenciadorestacionamento.repository.SectorRepository;
 import jakarta.persistence.EntityManager;

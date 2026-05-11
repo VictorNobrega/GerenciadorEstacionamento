@@ -5,8 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.estapar.gerenciadorestacionamento.domain.EventType;
 import com.estapar.gerenciadorestacionamento.dto.WebhookRecordResponse;
+import com.estapar.gerenciadorestacionamento.enums.EventType;
 import com.estapar.gerenciadorestacionamento.service.WebhookService;
 import java.math.BigDecimal;
 import java.time.Instant;

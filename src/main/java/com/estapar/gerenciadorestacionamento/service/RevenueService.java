@@ -1,6 +1,7 @@
 package com.estapar.gerenciadorestacionamento.service;
 
 import com.estapar.gerenciadorestacionamento.dto.RevenueResponse;
+import com.estapar.gerenciadorestacionamento.exception.BusinessException;
 import com.estapar.gerenciadorestacionamento.repository.SectorRepository;
 import com.estapar.gerenciadorestacionamento.repository.VehicleStayRepository;
 import java.math.BigDecimal;

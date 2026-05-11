@@ -1,5 +1,6 @@
 package com.estapar.gerenciadorestacionamento.domain;
 
+import com.estapar.gerenciadorestacionamento.enums.EventType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

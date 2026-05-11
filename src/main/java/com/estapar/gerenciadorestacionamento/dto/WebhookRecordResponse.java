@@ -1,6 +1,6 @@
 package com.estapar.gerenciadorestacionamento.dto;
 
-import com.estapar.gerenciadorestacionamento.domain.EventType;
+import com.estapar.gerenciadorestacionamento.enums.EventType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.Instant;

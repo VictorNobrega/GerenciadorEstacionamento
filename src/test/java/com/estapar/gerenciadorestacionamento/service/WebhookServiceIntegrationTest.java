@@ -3,10 +3,11 @@ package com.estapar.gerenciadorestacionamento.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.estapar.gerenciadorestacionamento.domain.EventType;
 import com.estapar.gerenciadorestacionamento.domain.ParkingSpot;
 import com.estapar.gerenciadorestacionamento.domain.Sector;
 import com.estapar.gerenciadorestacionamento.dto.WebhookRequest;
+import com.estapar.gerenciadorestacionamento.enums.EventType;
+import com.estapar.gerenciadorestacionamento.exception.BusinessException;
 import com.estapar.gerenciadorestacionamento.repository.ParkingSpotRepository;
 import com.estapar.gerenciadorestacionamento.repository.SectorRepository;
 import com.estapar.gerenciadorestacionamento.repository.VehicleStayRepository;

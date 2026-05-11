@@ -4,6 +4,7 @@ import com.estapar.gerenciadorestacionamento.domain.ParkingSpot;
 import com.estapar.gerenciadorestacionamento.domain.VehicleStay;
 import com.estapar.gerenciadorestacionamento.dto.WebhookRecordResponse;
 import com.estapar.gerenciadorestacionamento.dto.WebhookRequest;
+import com.estapar.gerenciadorestacionamento.exception.BusinessException;
 import com.estapar.gerenciadorestacionamento.repository.ParkingSpotRepository;
 import com.estapar.gerenciadorestacionamento.repository.VehicleStayRepository;
 import jakarta.transaction.Transactional;

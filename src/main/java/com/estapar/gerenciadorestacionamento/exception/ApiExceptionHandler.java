@@ -1,7 +1,6 @@
-package com.estapar.gerenciadorestacionamento.controller;
+package com.estapar.gerenciadorestacionamento.exception;
 
 import com.estapar.gerenciadorestacionamento.dto.ErrorResponse;
-import com.estapar.gerenciadorestacionamento.service.BusinessException;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.estapar.gerenciadorestacionamento.service;
+package com.estapar.gerenciadorestacionamento.exception;
 
 import org.springframework.http.HttpStatus;
 
