@@ -42,8 +42,9 @@ class WebhookServiceIntegrationTest {
 		parkingSpotRepository.deleteAll();
 		sectorRepository.deleteAll();
 
-		Sector sector = sectorRepository.save(new Sector("A", BigDecimal.valueOf(10), 1));
+		Sector sector = sectorRepository.save(new Sector("A", BigDecimal.valueOf(10), 2));
 		parkingSpotRepository.save(new ParkingSpot(1L, sector, BigDecimal.valueOf(-23.561684), BigDecimal.valueOf(-46.655981)));
+		parkingSpotRepository.save(new ParkingSpot(2L, sector, BigDecimal.valueOf(-23.561664), BigDecimal.valueOf(-46.655961)));
 	}
 
 	@Test
@@ -65,6 +66,25 @@ class WebhookServiceIntegrationTest {
 		webhookService.handle(new WebhookRequest("ZUL0002", Instant.parse("2025-01-01T12:10:00Z"), null, null, null, EventType.ENTRY));
 
 		assertThatThrownBy(() -> webhookService.handle(new WebhookRequest("ZUL0002", null, null, BigDecimal.valueOf(-23.561684), BigDecimal.valueOf(-46.655981), EventType.PARKED)))
+				.isInstanceOf(BusinessException.class)
+				.extracting("status")
+				.isEqualTo(HttpStatus.CONFLICT);
+	}
+
+	@Test
+	void rejectsEntryOnlyWhenAllSectorsAreFull() {
+		Sector sectorB = sectorRepository.save(new Sector("B", BigDecimal.valueOf(20), 1));
+		parkingSpotRepository.save(new ParkingSpot(3L, sectorB, BigDecimal.valueOf(-23.561644), BigDecimal.valueOf(-46.655941)));
+
+		webhookService.handle(new WebhookRequest("ZUL0001", Instant.parse("2025-01-01T12:00:00Z"), null, null, null, EventType.ENTRY));
+		webhookService.handle(new WebhookRequest("ZUL0001", null, null, BigDecimal.valueOf(-23.561684), BigDecimal.valueOf(-46.655981), EventType.PARKED));
+		webhookService.handle(new WebhookRequest("ZUL0002", Instant.parse("2025-01-01T12:10:00Z"), null, null, null, EventType.ENTRY));
+		webhookService.handle(new WebhookRequest("ZUL0002", null, null, BigDecimal.valueOf(-23.561664), BigDecimal.valueOf(-46.655961), EventType.PARKED));
+
+		webhookService.handle(new WebhookRequest("ZUL0003", Instant.parse("2025-01-01T12:20:00Z"), null, null, null, EventType.ENTRY));
+		webhookService.handle(new WebhookRequest("ZUL0003", null, null, BigDecimal.valueOf(-23.561644), BigDecimal.valueOf(-46.655941), EventType.PARKED));
+
+		assertThatThrownBy(() -> webhookService.handle(new WebhookRequest("ZUL0004", Instant.parse("2025-01-01T12:30:00Z"), null, null, null, EventType.ENTRY)))
 				.isInstanceOf(BusinessException.class)
 				.extracting("status")
 				.isEqualTo(HttpStatus.CONFLICT);

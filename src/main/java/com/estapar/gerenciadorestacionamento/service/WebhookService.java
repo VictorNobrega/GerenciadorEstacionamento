@@ -68,10 +68,15 @@ public class WebhookService {
 			throw new BusinessException(HttpStatus.BAD_REQUEST, "entry_time is required for ENTRY events");
 		}
 
-		VehicleStay stay = vehicleStayRepository
-				.findFirstByLicensePlateAndExitTimeIsNullOrderByEntryTimeDesc(request.licensePlate())
-				.orElseGet(() -> new VehicleStay(request.licensePlate(), request.entryTime()));
-		stay.refreshEntryTime(request.entryTime());
+		if (vehicleStayRepository.findFirstByLicensePlateAndExitTimeIsNullOrderByEntryTimeDesc(request.licensePlate()).isPresent()) {
+			return;
+		}
+
+		if (!parkingSpotRepository.hasAvailableSpot()) {
+			throw new BusinessException(HttpStatus.CONFLICT, "Parking is full");
+		}
+
+		VehicleStay stay = new VehicleStay(request.licensePlate(), request.entryTime());
 		vehicleStayRepository.save(stay);
 	}
 

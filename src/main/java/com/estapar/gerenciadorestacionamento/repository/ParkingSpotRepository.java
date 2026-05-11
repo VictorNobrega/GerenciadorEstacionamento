@@ -15,4 +15,7 @@ public interface ParkingSpotRepository extends JpaRepository<ParkingSpot, Long> 
 
 	@Query("select count(s) > 0 from ParkingSpot s where s.sector.code = :sectorCode and s.occupied = false")
 	boolean hasAvailableSpot(@Param("sectorCode") String sectorCode);
+
+	@Query("select count(s) > 0 from ParkingSpot s where s.occupied = false")
+	boolean hasAvailableSpot();
 }
