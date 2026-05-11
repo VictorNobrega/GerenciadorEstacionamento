@@ -23,6 +23,8 @@ import org.springframework.web.client.RestTemplate;
 @Profile("!test")
 public class GarageBootstrapService implements CommandLineRunner {
 
+	private static final String GARAGE_ENDPOINT = "/garage";
+
 	private final RestTemplate restTemplate;
 	private final EntityManager entityManager;
 	private final SectorRepository sectorRepository;
@@ -50,7 +52,7 @@ public class GarageBootstrapService implements CommandLineRunner {
 
 		GarageResponse response;
 		try {
-			response = restTemplate.getForObject(simulatorUrl + "/garage", GarageResponse.class);
+			response = restTemplate.getForObject(simulatorUrl + GARAGE_ENDPOINT, GarageResponse.class);
 		} catch (RestClientException ex) {
 			throw new BusinessException(HttpStatus.SERVICE_UNAVAILABLE, "Unable to load garage data from simulator");
 		}

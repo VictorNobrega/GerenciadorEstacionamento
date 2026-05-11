@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class RevenueService {
 
+	private static final int MONEY_SCALE = 2;
+	private static final String CURRENCY_CODE = "BRL";
+
 	private final VehicleStayRepository vehicleStayRepository;
 	private final SectorRepository sectorRepository;
 
@@ -29,7 +32,7 @@ public class RevenueService {
 		}
 		Instant start = date.atStartOfDay().toInstant(ZoneOffset.UTC);
 		Instant end = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
-		BigDecimal amount = vehicleStayRepository.sumRevenue(sector, start, end).setScale(2, RoundingMode.HALF_UP);
-		return new RevenueResponse(amount, "BRL", Instant.now());
+		BigDecimal amount = vehicleStayRepository.sumRevenue(sector, start, end).setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+		return new RevenueResponse(amount, CURRENCY_CODE, Instant.now());
 	}
 }
