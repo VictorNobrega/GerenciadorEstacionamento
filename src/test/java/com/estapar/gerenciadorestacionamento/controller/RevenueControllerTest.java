@@ -45,4 +45,18 @@ class RevenueControllerTest {
 				.andExpect(jsonPath("$.currency").value("BRL"))
 				.andExpect(jsonPath("$.timestamp").value("2025-01-01T15:00:00Z"));
 	}
+
+	@Test
+	void returnsFriendlyMessageForInvalidRequestBody() throws Exception {
+		mockMvc.perform(get("/revenue")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "date": "not-a-date",
+								  "sector": "A"
+								}
+								"""))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Invalid request body"));
+	}
 }

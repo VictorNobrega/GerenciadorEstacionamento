@@ -29,13 +29,19 @@ public class ApiExceptionHandler {
 		return build(HttpStatus.BAD_REQUEST, message);
 	}
 
-	@ExceptionHandler({
-			HttpMessageNotReadableException.class,
-			MissingServletRequestParameterException.class,
-			MethodArgumentTypeMismatchException.class
-	})
-	public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex) {
-		return build(HttpStatus.BAD_REQUEST, ex.getMessage());
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ErrorResponse> handleUnreadableMessage() {
+		return build(HttpStatus.BAD_REQUEST, "Invalid request body");
+	}
+
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<ErrorResponse> handleMissingParameter(MissingServletRequestParameterException ex) {
+		return build(HttpStatus.BAD_REQUEST, "Required parameter is missing: " + ex.getParameterName());
+	}
+
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+		return build(HttpStatus.BAD_REQUEST, "Invalid value for parameter: " + ex.getName());
 	}
 
 	private String formatFieldError(FieldError error) {

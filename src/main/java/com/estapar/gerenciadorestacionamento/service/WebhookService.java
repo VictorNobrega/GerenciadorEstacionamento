@@ -100,7 +100,7 @@ public class WebhookService {
 		}
 
 		long occupied = parkingSpotRepository.countBySectorCodeAndOccupiedTrue(spot.getSector().getCode());
-		if (occupied >= spot.getSector().getMaxCapacity() || !parkingSpotRepository.hasAvailableSpot(spot.getSector().getCode())) {
+		if (occupied >= spot.getSector().getMaxCapacity()) {
 			throw new BusinessException(HttpStatus.CONFLICT, "Sector is full");
 		}
 

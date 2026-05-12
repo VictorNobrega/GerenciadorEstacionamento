@@ -8,6 +8,7 @@ import com.estapar.gerenciadorestacionamento.repository.ParkingSpotRepository;
 import com.estapar.gerenciadorestacionamento.repository.SectorRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -48,8 +49,6 @@ public class GarageBootstrapService implements CommandLineRunner {
 	@Override
 	@Transactional
 	public void run(String... args) {
-		clearDatabase();
-
 		GarageResponse response;
 		try {
 			response = restTemplate.getForObject(simulatorUrl + GARAGE_ENDPOINT, GarageResponse.class);
@@ -60,6 +59,9 @@ public class GarageBootstrapService implements CommandLineRunner {
 		if (response == null) {
 			throw new BusinessException(HttpStatus.SERVICE_UNAVAILABLE, "Simulator returned an empty garage response");
 		}
+		validateGarageResponse(response);
+
+		clearDatabase();
 
 		for (GarageResponse.GarageSectorResponse sectorResponse : response.garage()) {
 			Sector sector = sectorRepository.findById(sectorResponse.sector())
@@ -82,6 +84,51 @@ public class GarageBootstrapService implements CommandLineRunner {
 			spot.update(sector, spotResponse.lat(), spotResponse.lng());
 			parkingSpotRepository.save(spot);
 		}
+	}
+
+	private void validateGarageResponse(GarageResponse response) {
+		if (response.garage() == null || response.garage().isEmpty()) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage response must include at least one sector");
+		}
+		if (response.spots() == null || response.spots().isEmpty()) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage response must include at least one spot");
+		}
+		response.garage().forEach(this::validateSector);
+		response.spots().forEach(this::validateSpot);
+	}
+
+	private void validateSector(GarageResponse.GarageSectorResponse sector) {
+		if (sector == null) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage sector is required");
+		}
+		if (isBlank(sector.sector())) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage sector code is required");
+		}
+		if (sector.basePrice() == null || sector.basePrice().compareTo(BigDecimal.ZERO) <= 0) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage sector base price must be positive");
+		}
+		if (sector.maxCapacity() <= 0) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage sector max capacity must be positive");
+		}
+	}
+
+	private void validateSpot(GarageResponse.GarageSpotResponse spot) {
+		if (spot == null) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage spot is required");
+		}
+		if (spot.id() == null) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage spot id is required");
+		}
+		if (isBlank(spot.sector())) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage spot sector is required");
+		}
+		if (spot.lat() == null || spot.lng() == null) {
+			throw new BusinessException(HttpStatus.BAD_REQUEST, "Garage spot coordinates are required");
+		}
+	}
+
+	private boolean isBlank(String value) {
+		return value == null || value.isBlank();
 	}
 
 	private void clearDatabase() {

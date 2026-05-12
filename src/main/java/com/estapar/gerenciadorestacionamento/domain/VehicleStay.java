@@ -94,15 +94,6 @@ public class VehicleStay {
 		return lastEventType;
 	}
 
-	public boolean isClosed() {
-		return exitTime != null;
-	}
-
-	public void refreshEntryTime(Instant entryTime) {
-		this.entryTime = entryTime;
-		this.lastEventType = EventType.ENTRY;
-	}
-
 	public void park(ParkingSpot spot, BigDecimal hourlyPrice) {
 		this.spot = spot;
 		this.sector = spot.getSector();

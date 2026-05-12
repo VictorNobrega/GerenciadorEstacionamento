@@ -55,7 +55,7 @@ class WebhookServiceIntegrationTest {
 
 		var stay = vehicleStayRepository.findAll().getFirst();
 		assertThat(stay.getAmount()).isEqualByComparingTo("18.00");
-		assertThat(stay.isClosed()).isTrue();
+		assertThat(stay.getExitTime()).isNotNull();
 		assertThat(parkingSpotRepository.findById(1L).orElseThrow().isOccupied()).isFalse();
 	}
 

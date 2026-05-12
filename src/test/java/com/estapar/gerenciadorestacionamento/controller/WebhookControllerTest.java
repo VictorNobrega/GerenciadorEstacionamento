@@ -56,4 +56,18 @@ class WebhookControllerTest {
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.message").value("Sector is full"));
 	}
+
+	@Test
+	void returnsFriendlyMessageForInvalidJson() throws Exception {
+		mockMvc.perform(post("/webhook")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "license_plate": "ZUL0001",
+								  "event_type": "ENTRY",
+								}
+								"""))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Invalid request body"));
+	}
 }
