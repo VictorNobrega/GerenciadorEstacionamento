@@ -14,6 +14,8 @@ public interface VehicleStayRepository extends JpaRepository<VehicleStay, Long> 
 
 	Optional<VehicleStay> findFirstByLicensePlateAndExitTimeIsNullOrderByEntryTimeDesc(String licensePlate);
 
+	long countByExitTimeIsNull();
+
 	@EntityGraph(attributePaths = {"sector", "spot"})
 	List<VehicleStay> findAllByOrderByEntryTimeDescIdDesc();
 

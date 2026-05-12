@@ -89,4 +89,15 @@ class WebhookServiceIntegrationTest {
 				.extracting("status")
 				.isEqualTo(HttpStatus.CONFLICT);
 	}
+
+	@Test
+	void rejectsEntryWhenAllSpotsAreReservedByActiveEntries() {
+		webhookService.handle(new WebhookRequest("ZUL0001", Instant.parse("2025-01-01T12:00:00Z"), null, null, null, EventType.ENTRY));
+		webhookService.handle(new WebhookRequest("ZUL0002", Instant.parse("2025-01-01T12:10:00Z"), null, null, null, EventType.ENTRY));
+
+		assertThatThrownBy(() -> webhookService.handle(new WebhookRequest("ZUL0003", Instant.parse("2025-01-01T12:20:00Z"), null, null, null, EventType.ENTRY)))
+				.isInstanceOf(BusinessException.class)
+				.extracting("status")
+				.isEqualTo(HttpStatus.CONFLICT);
+	}
 }

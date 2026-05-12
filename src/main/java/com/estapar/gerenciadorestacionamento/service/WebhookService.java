@@ -72,7 +72,7 @@ public class WebhookService {
 			return;
 		}
 
-		if (!parkingSpotRepository.hasAvailableSpot()) {
+		if (vehicleStayRepository.countByExitTimeIsNull() >= parkingSpotRepository.count()) {
 			throw new BusinessException(HttpStatus.CONFLICT, "Parking is full");
 		}
 
